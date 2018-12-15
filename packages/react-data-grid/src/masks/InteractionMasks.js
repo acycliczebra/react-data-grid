@@ -95,7 +95,8 @@ class InteractionMasks extends React.Component {
     firstEditorKeyPress: null
   };
 
-  isRightClick(e = window.event) {
+  isRightClick() {
+    let e = window.event
     let isRightMB
     if ('which' in e) {  // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
       isRightMB = e.which == 3;
