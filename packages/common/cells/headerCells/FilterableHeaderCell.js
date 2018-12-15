@@ -8,12 +8,12 @@ class FilterableHeaderCell extends React.Component {
     column: PropTypes.shape(Column)
   };
 
-  state = {filterTerm: ''};
+  state = { filterTerm: '' };
 
   handleChange = (e) => {
-    let val = e.target.value;
-    this.setState({filterTerm: val });
-    this.props.onChange({filterTerm: val, column: this.props.column});
+    const val = e.target.value;
+    this.setState({ filterTerm: val });
+    this.props.onChange({ filterTerm: val, column: this.props.column });
   };
 
   renderInput = () => {
@@ -21,7 +21,7 @@ class FilterableHeaderCell extends React.Component {
       return <span/>;
     }
 
-    let inputKey = 'header-filter-' + this.props.column.key;
+    const inputKey = 'header-filter-' + this.props.column.key;
     return (<input key={inputKey} type="text" className="form-control input-sm" placeholder="Search" value={this.state.filterTerm} onChange={this.handleChange}/>);
   };
 
