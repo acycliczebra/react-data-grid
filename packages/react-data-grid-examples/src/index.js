@@ -6,6 +6,7 @@ import App from './components/App';
 
 ReactDOM.render((
   <Router>
+    <div>TESTING</div>
     <App />
   </Router>
 ), document.getElementById('root'));
