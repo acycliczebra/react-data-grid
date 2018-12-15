@@ -20,13 +20,14 @@ import {
   selectedRangeIsSingleCell
 } from '../utils/SelectedCellUtils';
 import { isFunction } from 'common/utils';
-import { getSize, getColumn, isFrozen } from '../ColumnUtils';
+import {getSize, getColumn, isFrozen} from '../ColumnUtils';
 import * as keyCodes from '../KeyCodes';
 import { CellNavigationMode, EventTypes } from 'common/constants';
 
 require('../../../../themes/interaction-masks.css');
 
 const SCROLL_CELL_BUFFER = 2;
+
 
 class InteractionMasks extends React.Component {
   static dispplayName = 'InteractionMasks';
@@ -93,6 +94,17 @@ class InteractionMasks extends React.Component {
     isEditorEnabled: false,
     firstEditorKeyPress: null
   };
+
+  isRightClick(e = window.event) {
+    let isRightMB
+    if ('which' in e) {  // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
+      isRightMB = e.which == 3;
+    } else if ('button' in e) {  // IE, Opera
+      isRightMB = e.button == 2;
+    }
+
+    return isRightMB
+  }
 
   componentDidUpdate(prevProps, prevState) {
     const { selectedPosition, isEditorEnabled } = this.state;
@@ -454,6 +466,10 @@ class InteractionMasks extends React.Component {
 
   selectCell = (cell, openEditor) => {
     const callback = openEditor ? this.openEditor : () => null;
+    if (this.isRightClick()) {
+      return
+    }
+
     this.setState(prevState => {
       const next = { ...prevState.selectedPosition, ...cell };
       if (this.isCellWithinBounds(next)) {
@@ -483,6 +499,9 @@ class InteractionMasks extends React.Component {
   }
 
   onSelectCellRangeStarted = (selectedPosition) => {
+    if (this.isRightClick()) {
+      return
+    }
     this.setState({
       selectedRange: this.createSingleCellSelectedRange(selectedPosition, true),
       selectedPosition
@@ -519,6 +538,10 @@ class InteractionMasks extends React.Component {
       cursorCell: cellPosition
     };
 
+    if (this.isRightClick()) {
+      //return
+    }
+
     this.setState({
       selectedRange
     }, () => {
@@ -532,6 +555,9 @@ class InteractionMasks extends React.Component {
   };
 
   onSelectCellRangeEnded = () => {
+    if (this.isRightClick()) {
+      //return
+    }
     const selectedRange = { ...this.state.selectedRange, isDragging: false };
     this.setState({ selectedRange }, () => {
       if (isFunction(this.props.onCellRangeSelectionCompleted)) {
@@ -678,6 +704,7 @@ class InteractionMasks extends React.Component {
     const { isEditorEnabled, firstEditorKeyPress, selectedPosition, draggedPosition, copiedPosition } = this.state;
     const rowData = getSelectedRow({ selectedPosition, rowGetter });
     const columns = getRowColumns(selectedPosition.rowIdx);
+
     return (
       <div
         onKeyDown={this.onKeyDown}
